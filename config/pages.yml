@@ -1,4 +1,20 @@
-"put here the name of the page":
-  url: the url of the page
-  selector: an xpath selector
-  refresh_time: number of seconds you want to wait between check and check
+"xtralife ps5":
+  url: https://www.xtralife.com/producto/ps5-consola-ps5-estandar/62204
+  selector: '//*[@id="content"]/sku/div[1]/div[2]/main-panel/div/div[5]/div/add-sku/div/button'
+  refresh_time: 10
+"carrefour ps5":
+  url: https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p
+  selector: '//*[@id="app"]/div/main/div[2]/div/div[1]/div/div[2]/div[2]/div[1]/div'
+  refresh_time: 10
+"game ps5":
+  url: https://www.game.es/HARDWARE/CONSOLA/PLAYSTATION-5/CONSOLA-PLAYSTATION-5/183224
+  selector: '//*[@id="body"]/div[1]/div/div/section[1]'
+  refresh_time: 30
+"fnac ps5":
+  url: https://www.fnac.es/Consola-PlayStation-5-Videoconsola-Consola/a7724798
+  selector: "/html/body/div[2]/div/div[1]/div[2]/section/ul[2]"
+  refresh_time: 30
+"media markt ps5":
+  url: https://www.mediamarkt.es/es/product/_consola-sony-ps5-825-gb-4k-hdr-blanco-1487016.html
+  selector: '//*[@id="widget_news"]'
+  refresh_time: 30

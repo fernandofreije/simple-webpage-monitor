@@ -12,7 +12,7 @@ rope = "*"
 tinydb = "*"
 pyyaml = "*"
 dhooks = "*"
-selenium = "*"
+pyppeteer = "*"
 
 [requires]
 python_version = "3.8"

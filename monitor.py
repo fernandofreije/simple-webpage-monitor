@@ -1,16 +1,13 @@
 from yaml import safe_load
 from tinydb import TinyDB, Query
 from dhooks import Webhook
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import time
 import logging
 import datetime
 import asyncio
 import re
+from pyppeteer import launch
+
 
 TAG_RE = re.compile(r'<[^>]+>')
 
@@ -39,29 +36,25 @@ class Monitor:
             name, page['url'], page['selector'], page['refresh_time']) for name, page in self.pages.items()])
 
     async def check_page(self, name, url, selector, refresh_time):
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        driver = webdriver.Chrome(
-            self.config['driver_path'], options=chrome_options)
+        browser = await launch()
         while True:
             logging.info(f'checking {url}')
-            driver.get(url)
-            logging.debug(driver.page_source)
-            html = None
-            try:
-                html = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, selector))).get_attribute("innerHTML")
-                html = TAG_RE.sub('', html)
-                html = html.replace("\n", " ").replace('\t', "")
-                html = re.sub(' +', ' ', html)
+            page = await browser.newPage()
+            await page.goto(url, options={'wait_until': 'load', 'timeout': 0})
+            page.on(lambda response: logging.debug(response.text())
+                    if response['ok'] and response['url'] == url else None)
 
-            except Exception as e:
-                logging.error(e)
-            if not html:
+            await page.waitForXPath(selector)
+            elements = (await page.xpath(selector))
+            if (not elements):
                 logging.error(
                     f'{selector} does not find results')
-                await asyncio.sleep(int(refresh_time))
                 continue
+            html = await page.evaluate('(element) => element.textContent', elements[0])
+            html = TAG_RE.sub('', html)
+            html = html.replace("\n", " ").replace('\t', "")
+            html = re.sub(' +', ' ', html)
+
             logging.info(f'html for {name} is {html}')
             diff = self.db.checkDiff(name, html)
             if (diff):
@@ -114,6 +107,6 @@ class DiscordNotifier:
 if __name__ == "__main__":
     monitor = Monitor()
     try:
-        asyncio.run(monitor.run())
+        asyncio.get_event_loop().run_until_complete(monitor.run())
     except KeyboardInterrupt:
         monitor.close()
