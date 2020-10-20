@@ -1,0 +1,4 @@
+"put here the name of the page":
+  url: the url of the page
+  selector: an xpath selector
+  refresh_time: number of seconds you want to wait between check and check
