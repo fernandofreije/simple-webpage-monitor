@@ -38,29 +38,34 @@ class Monitor:
     async def check_page(self, name, url, selector, refresh_time):
         browser = await launch()
         while True:
-            logging.info(f'checking {url}')
-            page = await browser.newPage()
-            await page.goto(url, options={'wait_until': 'load', 'timeout': 0})
-            page.on(lambda response: logging.debug(response.text())
-                    if response['ok'] and response['url'] == url else None)
+            try:
+                logging.info(f'checking {url}')
+                page = await browser.newPage()
+                await page.goto(url, options={'wait_until': 'load', 'timeout': 0})
+                page.on(lambda response: logging.debug(response.text())
+                        if response['ok'] and response['url'] == url else None)
 
-            await page.waitForXPath(selector)
-            elements = (await page.xpath(selector))
-            if (not elements):
-                logging.error(
-                    f'{selector} does not find results')
+                await page.waitForXPath(selector, options={'timeout': 3000})
+                elements = (await page.xpath(selector))
+                if (not elements):
+                    logging.error(
+                        f'{selector} does not find results')
+                    continue
+                html = await page.evaluate('(element) => element.textContent', elements[0])
+                html = TAG_RE.sub('', html)
+                html = html.replace("\n", " ").replace('\t', "")
+                html = re.sub(' +', ' ', html)
+
+                logging.info(f'html for {name} is {html}')
+                diff = self.db.checkDiff(name, html)
+                if (diff):
+                    logging.info(f'{name} has changed!')
+                    self.notifier.notify(name, url, diff)
+            except Exception as e:
+                logging.error(e)
                 continue
-            html = await page.evaluate('(element) => element.textContent', elements[0])
-            html = TAG_RE.sub('', html)
-            html = html.replace("\n", " ").replace('\t', "")
-            html = re.sub(' +', ' ', html)
-
-            logging.info(f'html for {name} is {html}')
-            diff = self.db.checkDiff(name, html)
-            if (diff):
-                logging.info(f'{name} has changed!')
-                self.notifier.notify(name, url, diff)
-            await asyncio.sleep(int(refresh_time))
+            finally:
+                await asyncio.sleep(int(refresh_time))
 
 
 class Database:
