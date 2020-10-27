@@ -148,4 +148,4 @@ driver/*
 
 #Config files
 config/config.yml
-config/pages.yml
+config/pages.ymlk
