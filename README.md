@@ -2,7 +2,7 @@
 Just a very simple webpage monitor that notifies you on changes.
 
 
-## SETUP
+## Config files setup
 
 ### Example config/pages.yml file
 
