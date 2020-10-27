@@ -1,3 +1,3 @@
-webhook_url: "https://discord.com/api/webhooks/767810040442126357/4SXESWHbmQqCDIzwTFVjfwdusJ-j0bTqtcjcl8XzSbRdFApR0a-ZnHjEoLDxRQV6KL7t"
-driver_path: "driver/chromedriver"
+#webhook_url: Put here your webhook url
+#driver_path: Put here the selenium driver path
 log_level: INFO
