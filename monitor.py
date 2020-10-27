@@ -41,11 +41,11 @@ class Monitor:
             try:
                 logging.info(f'checking {url}')
                 page = await browser.newPage()
-                await page.goto(url, options={'wait_until': 'load', 'timeout': 0})
+                await page.goto(url, options={'wait_until': 'load'})
                 page.on(lambda response: logging.debug(response.text())
                         if response['ok'] and response['url'] == url else None)
 
-                await page.waitForXPath(selector, options={'timeout': 3000})
+                await page.waitForXPath(selector)
                 elements = (await page.xpath(selector))
                 if (not elements):
                     logging.error(
@@ -63,6 +63,8 @@ class Monitor:
                     self.notifier.notify(name, url, diff)
             except Exception as e:
                 logging.error(e)
+                await browser.close()
+                browser = await launch()
                 continue
             finally:
                 await asyncio.sleep(int(refresh_time))

@@ -3,7 +3,7 @@
   selector: '//*[@id="content"]/sku/div[1]/div[2]/main-panel/div/div[5]/div/add-sku/div/button'
   refresh_time: 10
 "carrefour ps5":
-  url: https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p
+  url: https://www.carrefour.es/playstation-5-825gb
   selector: '//*[@id="app"]/div/main/div[2]/div/div[1]/div/div[2]/div[2]/div[1]/div'
   refresh_time: 10
 "game ps5":
