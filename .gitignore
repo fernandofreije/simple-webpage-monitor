@@ -145,3 +145,7 @@ db/*
 
 #Browser Driver
 driver/*
+
+#Config files
+config/config.yml
+config/pages.yml
